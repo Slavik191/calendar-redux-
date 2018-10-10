@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './Calendar.sass';
 import left from './chevron-left.png';
 import right from './chevron-right.png';
 import CalendarDay from '../CalendarDay/CalendarDay';
@@ -8,6 +7,7 @@ import AlertDialogSlide from '../AlertDialogSlide/AlertDialogSlide';
 import NewEventButton from '../NewEventButton/NewEventButton';
 import EventModal from '../EventModal/EventModal';
 import { connect } from 'react-redux';
+import './Calendar.sass';
 
 Date.prototype.daysInMonth = function () {
     return 32 - new Date(this.getFullYear(), this.getMonth(), 32).getDate();
@@ -23,12 +23,12 @@ class Calendar extends Component {
 
 
     state = {
-        date: new Date(),
+        //date: new Date(),
         advancedMode: false,
         events: {},
         annualEvents: {},
         modal: false,
-        dateInfo: null,
+        //dateInfo: null,
         EventModalInfo: null,
         openEventModal: false
     }
@@ -149,12 +149,12 @@ class Calendar extends Component {
 
     }
 
-    openModal = (arrDayInfo) => {
-        this.setState({
-            modal: true,
-            dateInfo: arrDayInfo
-        });
-    }
+    // openModal = (arrDayInfo) => {
+    //     this.props.onDataInfo(arrDayInfo)
+    //     this.setState({
+    //         modal: true,
+    //     });
+    // }
 
     closeModal = () => {
         this.setState({
@@ -175,29 +175,18 @@ class Calendar extends Component {
         });
     }
 
-    activateAdvancedMode = () => { console.log(1);this.setState({ advancedMode: !this.state.advancedMode }); }
+    activateAdvancedMode = () => {this.setState({ advancedMode: !this.state.advancedMode }); }
 
     nextmounth = () => {
-        let date = this.props.date
+        let date = new Date(this.props.date.date);
         date.setMonth(date.getMonth() + 1);
         this.props.onNewMonth(date);
-        // let date = this.state.date;
-        // date.setMonth(date.getMonth() + 1);
-        // this.setState({
-        //     date: date
-        // })
     }
 
     previousmounth = () => {
-        let date = this.props.date
+        let date = new Date(this.props.date.date);
         date.setMonth(date.getMonth() - 1);
         this.props.onNewMonth(date);
-        // let date = this.state.date;
-        // date.setMonth(date.getMonth() - 1);
-        // this.setState({
-        //     date: date,
-        //     checkedA: true
-        // })
     }
 
 
@@ -205,12 +194,12 @@ class Calendar extends Component {
         let items = [];
         let eventsMonth;
         let annualEventsMonth;
-        let startDay = this.props.date.startDay();
-        let daysInMonth = this.props.date.daysInMonth();
-        if (this.state.events[`${this.props.date.getYear() + 1900}`] !== undefined) {
-            eventsMonth = this.state.events[`${this.props.date.getYear() + 1900}`][`${this.props.date.getMonth() + 1}`]
+        let startDay = this.props.date.date.startDay();
+        let daysInMonth = this.props.date.date.daysInMonth();
+        if (this.state.events[`${this.props.date.date.getYear() + 1900}`] !== undefined) {
+            eventsMonth = this.state.events[`${this.props.date.date.getYear() + 1900}`][`${this.props.date.getMonth() + 1}`]
         }
-        annualEventsMonth = this.state.annualEvents[`${this.props.date.getMonth() + 1}`]
+        annualEventsMonth = this.state.annualEvents[`${this.props.date.date.getMonth() + 1}`]
         for (let i = 1; i <= daysInMonth + startDay - 1; i++) {
             if (i >= startDay) {
                 let eventsDay;
@@ -220,7 +209,7 @@ class Calendar extends Component {
                     if (annualEventsMonth[`${i - (startDay - 1)}`] !== undefined) {
                         if (eventsDay === undefined)
                             eventsDay = [];
-                        if (annualEventsMonth[`${i - (startDay - 1)}`][0].year <= this.props.date.getYear() + 1900)
+                        if (annualEventsMonth[`${i - (startDay - 1)}`][0].year <= this.props.date.date.getYear() + 1900)
                             eventsDay.push(...annualEventsMonth[`${i - (startDay - 1)}`])
                     }
                 }
@@ -240,8 +229,8 @@ class Calendar extends Component {
                 
                 items.push(<CalendarDay
                     day={i - (startDay - 1)}
-                    month={this.props.date.getMonth() + 1}
-                    year={this.props.date.getYear() + 1900}
+                    month={this.props.date.date.getMonth() + 1}
+                    year={this.props.date.date.getYear() + 1900}
                     key={i - (startDay - 1)}
                     advancedMode={this.state.advancedMode}
                     ref={(calendarDay) => { this.calendarDay = calendarDay; }}
@@ -265,7 +254,7 @@ class Calendar extends Component {
     }
 
     render() {
-        console.log(this.props.date)
+        //console.log();
         return (
             <React.Fragment>
                 <EventModal exitEventModal={this.exitEventModal} EventModalInfo={this.state.EventModalInfo} open={this.state.openEventModal} />
@@ -276,7 +265,7 @@ class Calendar extends Component {
                         <div className='monthandyear'>
                             <img src={left} onClick={this.previousmounth} />
                             <div className='monthandyeartext'>
-                                {this.props.date.toLocaleString('ru', {
+                                {this.props.date.date.toLocaleString('ru', {
                                     month: 'long',
                                     year: 'numeric'
                                 })}
@@ -313,6 +302,9 @@ export default connect(
       dispatch => ({
         onNewMonth: (newDate) => {
           dispatch({ type: 'NEW_MONTH', payload: newDate })
-        }
+        },
+        // onDataInfo:  (dateInfo) => {
+        //     dispatch({ type: 'DATE_INFO', payload: dateInfo })
+        // }       
       })
 )(Calendar);

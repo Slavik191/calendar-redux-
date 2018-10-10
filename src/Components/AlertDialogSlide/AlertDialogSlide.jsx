@@ -7,6 +7,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import FormNewEvent from '../FormNewEvent/FormNewEvent.jsx';
 import AnnualForm from '../AnnualForm/AnnualForm';
+import { connect } from 'react-redux';
+
+
+
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -18,10 +22,11 @@ class AlertDialogSlide extends Component {
     }
 
     render() {
+        console.log(this.props.modal)
         return (
             <div>
                 <Dialog
-                    open={this.props.open}
+                    open={this.props.modal}
                     TransitionComponent={Transition}
                     keepMounted
                     onClose={this.handleClose}
@@ -38,7 +43,7 @@ class AlertDialogSlide extends Component {
                    
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.props.closeModal} color="primary">
+                        <Button onClick={this.props.onCloseModal} color="primary">
                             Отмена
             </Button>
                         <Button onClick={this.giveNewEvent} color="primary">
@@ -51,4 +56,14 @@ class AlertDialogSlide extends Component {
     }
 }
 
-export default AlertDialogSlide;
+
+export default connect(
+    state => ({
+        modal: state.modal.modal
+      }),
+      dispatch => ({
+        onCloseModal: () => {
+          dispatch({ type: 'OPEN_MODAL', payload: false });
+        }     
+      })
+)(AlertDialogSlide);

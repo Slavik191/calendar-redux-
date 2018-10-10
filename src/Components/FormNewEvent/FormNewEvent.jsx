@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
+import { connect } from 'react-redux';
 import './FormNewEvent.sass';
 
 class FormNewEvent extends Component{
@@ -164,4 +165,16 @@ class FormNewEvent extends Component{
     }
 }
 
-export default FormNewEvent;
+export default connect(
+    state => ({
+        dateInfo: state.date.dateInfo
+      }),
+    //   dispatch => ({
+    //     onNewMonth: (newDate) => {
+    //       dispatch({ type: 'NEW_MONTH', payload: newDate })
+    //     },
+    //     onDataInfo:  (dateInfo) => {
+    //         dispatch({ type: 'DATE_INFO', payload: dateInfo })
+    //     }       
+    //   })
+)(FormNewEvent);

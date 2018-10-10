@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CalendarDayEvent from '../CalendarDayEvent/CalendarDayEvent';
 import './CalendarDay.sass';
+import { connect } from 'react-redux';
 
 
 class CalendarDay extends Component{
@@ -14,11 +15,12 @@ class CalendarDay extends Component{
 
     openModalInfo = () => {
         if(this.props.day !== undefined){
-            this.props.openModal([this.props.day, this.props.month, this.props.year])
+            this.props.onOpenModal([this.props.day, this.props.month, this.props.year])
         }
     }
 
     render(){
+        console.log(this.props)
         let eventsDay;
         if(this.props.eventsDay !== undefined){
             eventsDay = this.props.eventsDay.map(event => {
@@ -34,5 +36,15 @@ class CalendarDay extends Component{
     }
 }
 
-export default CalendarDay;
+export default connect(
+    state => ({
+        modal: state.modal.modal
+      }),
+      dispatch => ({
+        onOpenModal: (arrDayInfo) => {
+          dispatch({ type: 'OPEN_MODAL', payload: true });
+          dispatch({ type: 'DATE_INFO', payload: arrDayInfo })
+        }     
+      })
+)(CalendarDay);
 
