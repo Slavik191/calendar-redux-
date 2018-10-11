@@ -1,20 +1,11 @@
 import React, { Component } from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import './AnnualForm.sass'
+import { connect } from 'react-redux';
+import './AnnualForm.sass';
 
 class AnnualForm extends Component {
-    state = {
-        checked: false,
-    };
-
-    handleChange = name => event => {
-        this.setState({ [name]: event.target.checked });
-    };
-
-
     render() {
-
         return (
             <div className = 'annualform'>
                 <FormControlLabel
@@ -22,8 +13,8 @@ class AnnualForm extends Component {
                     label="Повторять ежегодно"
                     control={
                         <Checkbox
-                            checked={this.state.checked}
-                            onChange={this.handleChange('checked')}
+                            checked={this.props.annualForm}
+                            onChange={this.props.onChengeAnnual}
                             value="checked"
                         />
                     }
@@ -34,5 +25,14 @@ class AnnualForm extends Component {
 
 }
 
-
-export default AnnualForm;
+export default connect(
+    state => ({
+        annualForm: state.annualForm
+      }),
+      dispatch => ({
+        onChengeAnnual: () => {
+          dispatch({ type: 'ANNUAL'})
+        },
+              
+      })
+)(AnnualForm);

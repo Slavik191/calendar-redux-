@@ -4,7 +4,6 @@ const initialState = {
 };
 
 export default function date(state = initialState, action) {
-    console.log(action)
     switch (action.type) {
         case 'OPEN_MODAL':
             return { ...state, modal: action.payload };

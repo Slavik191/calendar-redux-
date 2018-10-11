@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import { connect } from 'react-redux';
 import './NewEventButton.sass';
 
 const styles = theme => ({
@@ -14,13 +15,10 @@ const styles = theme => ({
 
 const NewEventButton = props => {
   const { classes } = props;
-
-  let openModal = () => {
-    props.openModal(null);
-  }
+  
   return (
     <div className = 'neweventbutton'>
-      <Button className={classes.button} onClick = {openModal}>Добавить</Button>
+      <Button className={classes.button} onClick = {props.onOpenModal}>Добавить</Button>
     </div>
       
   );
@@ -30,4 +28,14 @@ NewEventButton.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(NewEventButton);
+
+export default withStyles(styles)(connect(
+  state => ({}),
+  dispatch => ({
+    onOpenModal: (arrDayInfo) => {
+      dispatch({ type: 'OPEN_MODAL', payload: true });
+      dispatch({ type: 'DATE_INFO', payload: ['', '', ''] })
+    }     
+  })
+)(NewEventButton));
+

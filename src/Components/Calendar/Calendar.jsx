@@ -20,162 +20,8 @@ Date.prototype.startDay = function () {
 
 
 class Calendar extends Component {
-
-
-    state = {
-        //date: new Date(),
-        advancedMode: false,
-        events: {},
-        annualEvents: {},
-        modal: false,
-        //dateInfo: null,
-        EventModalInfo: null,
-        openEventModal: false
-    }
-
-    getNewEvent = (info, annual) => {
-        for (let key in info) {
-            if (`${info[key]}`.trim() === '') {
-                alert('Заполните все поля');
-                return false;
-            }
-        }
-        if (info.startHours * 60 + +info.startMinutes > info.endHours * 60 + +info.endMinutes) {
-            alert('Некорректное время');
-            return false;
-        }
-        if (new Date(`${info.year}/${info.month}/${info.day}`).toString() === 'Invalid Date') {
-            alert('Некорректная дата');
-            return false;
-        }
-        if (new Date() > new Date(info.year, info.month - 1, info.day, info.startHours, info.startMinutes)) {
-            alert('Вы указали прошедшую дату');
-            return false;
-        }
-        this.closeModal();
-        let intersection = false;
-        let events;
-        if (!annual) {
-            events = this.state.events;
-            if(events[`${info.year}`] !== undefined){
-                if(events[`${info.year}`][`${info.month}`] !== undefined){
-                    if(events[`${info.year}`][`${info.month}`][`${info.day}`] !== undefined){
-                        if (events[`${info.year}`][`${info.month}`][`${info.day}`].length > 0) {
-                            if(events[`${info.year}`][`${info.month}`][`${info.day}`] !== undefined){
-                                events[`${info.year}`][`${info.month}`][`${info.day}`].forEach(event => {
-                                    if (!(event.startHours * 60 + +event.startMinutes > info.endHours * 60 + +info.endMinutes || event.endHours * 60 + +event.endMinutes < info.startHours * 60 + +info.startMinutes))
-                                        intersection = true
-                                })
-                            }
-                        }
-                    }
-                }
-            }
-            if (this.state.annualEvents[`${info.month}`] !== undefined) {
-                if(this.state.annualEvents[`${info.month}`][`${info.day}`] !== undefined){
-                    this.state.annualEvents[`${info.month}`][`${info.day}`].forEach(event => {
-                        if (!(event.startHours * 60 + +event.startMinutes > info.endHours * 60 + +info.endMinutes || event.endHours * 60 + +event.endMinutes < info.startHours * 60 + +info.startMinutes))
-                            intersection = true
-                    })
-                }
-            }
-
-        }
-        else {
-            events = this.state.annualEvents;            
-            if(events[`${info.month}`] !== undefined){
-                if(events[`${info.month}`][`${info.day}`] !== undefined){
-                    if (events[`${info.month}`][`${info.day}`].length > 0) {
-                        events[`${info.month}`][`${info.day}`].forEach(event => {
-                            if (!(event.startHours * 60 + +event.startMinutes > info.endHours * 60 + +info.endMinutes || event.endHours * 60 + +event.endMinutes < info.startHours * 60 + +info.startMinutes))
-                                intersection = true
-                        })
-                    }
-                }
-            }
-            if (this.state.events[`${info.year}`] !== undefined) {
-                if (this.state.events[`${info.year}`][`${info.month}`] !== undefined) {
-                    if(this.state.events[`${info.year}`][`${info.month}`][`${info.day}`] !== undefined){
-                        this.state.events[`${info.year}`][`${info.month}`][`${info.day}`].forEach(event => {
-                            if (!(event.startHours * 60 + +event.startMinutes > info.endHours * 60 + +info.endMinutes || event.endHours * 60 + +event.endMinutes < info.startHours * 60 + +info.startMinutes))
-                                intersection = true
-                        })
-                    }
-                }
-            }
-        }
-        if (intersection ? window.confirm('Данное время уже занято...Всё равно добавить?') : true) {
-            if (!annual) {
-                if (events[`${info.year}`] === undefined)
-                    events[`${info.year}`] = {};
-                if (events[`${info.year}`][`${info.month}`] === undefined)
-                    events[`${info.year}`][`${info.month}`] = {};
-                if (events[`${info.year}`][`${info.month}`][`${info.day}`] === undefined)
-                    events[`${info.year}`][`${info.month}`][`${info.day}`] = [];
-                events[`${info.year}`][`${info.month}`][`${info.day}`].push({
-                    day: info.day,
-                    description: info.description,
-                    endHours: info.endHours,
-                    endMinutes: info.endMinutes,
-                    month: info.month,
-                    startHours: info.startHours,
-                    startMinutes: info.startMinutes,
-                    year: info.year
-                })
-                this.setState({
-                    events: events
-                })
-            }
-            else {
-                if (events[`${info.month}`] === undefined)
-                    events[`${info.month}`] = {};
-                if (events[`${info.month}`][`${info.day}`] === undefined)
-                    events[`${info.month}`][`${info.day}`] = [];
-                events[`${info.month}`][`${info.day}`].push({
-                    day: info.day,
-                    description: info.description,
-                    endHours: info.endHours,
-                    endMinutes: info.endMinutes,
-                    month: info.month,
-                    startHours: info.startHours,
-                    startMinutes: info.startMinutes,
-                    year: info.year
-                })
-                this.setState({
-                    annualEvents: events
-                })
-            }
-        }
-
-    }
-
-    // openModal = (arrDayInfo) => {
-    //     this.props.onDataInfo(arrDayInfo)
-    //     this.setState({
-    //         modal: true,
-    //     });
-    // }
-
-    closeModal = () => {
-        this.setState({
-            modal: false
-        });
-    }
-
-    openEventModal = (infoEvent) => {
-        this.setState({
-            openEventModal: true,
-            EventModalInfo: infoEvent
-        });
-    }
-
-    exitEventModal = () => {
-        this.setState({
-            openEventModal: false
-        });
-    }
-
-    activateAdvancedMode = () => {this.setState({ advancedMode: !this.state.advancedMode }); }
+    
+    
 
     nextmounth = () => {
         let date = new Date(this.props.date.date);
@@ -196,10 +42,10 @@ class Calendar extends Component {
         let annualEventsMonth;
         let startDay = this.props.date.date.startDay();
         let daysInMonth = this.props.date.date.daysInMonth();
-        if (this.state.events[`${this.props.date.date.getYear() + 1900}`] !== undefined) {
-            eventsMonth = this.state.events[`${this.props.date.date.getYear() + 1900}`][`${this.props.date.getMonth() + 1}`]
+        if (this.props.events.events[`${this.props.date.date.getYear() + 1900}`] !== undefined) {
+            eventsMonth = this.props.events.events[`${this.props.date.date.getYear() + 1900}`][`${this.props.date.date.getMonth() + 1}`]
         }
-        annualEventsMonth = this.state.annualEvents[`${this.props.date.date.getMonth() + 1}`]
+        annualEventsMonth = this.props.events.annualEvents[`${this.props.date.date.getMonth() + 1}`]
         for (let i = 1; i <= daysInMonth + startDay - 1; i++) {
             if (i >= startDay) {
                 let eventsDay;
@@ -228,16 +74,12 @@ class Calendar extends Component {
                 
                 
                 items.push(<CalendarDay
-                    day={i - (startDay - 1)}
-                    month={this.props.date.date.getMonth() + 1}
-                    year={this.props.date.date.getYear() + 1900}
-                    key={i - (startDay - 1)}
-                    advancedMode={this.state.advancedMode}
-                    ref={(calendarDay) => { this.calendarDay = calendarDay; }}
-                    openModal={this.openModal}
-                    eventsDay={eventsDay}
-                    openEventModal={this.openEventModal}
-                />)
+                            day={i - (startDay - 1)}
+                            month={this.props.date.date.getMonth() + 1}
+                            year={this.props.date.date.getYear() + 1900}
+                            key={i - (startDay - 1)}                
+                            eventsDay={eventsDay}
+                        />)
             }
             else {
                 items.push(<CalendarDay key={i + 50} />)
@@ -254,11 +96,10 @@ class Calendar extends Component {
     }
 
     render() {
-        //console.log();
         return (
             <React.Fragment>
-                <EventModal exitEventModal={this.exitEventModal} EventModalInfo={this.state.EventModalInfo} open={this.state.openEventModal} />
-                <AlertDialogSlide open={this.state.modal} closeModal={this.closeModal} getNewEvent={this.getNewEvent} dateInfo={this.state.dateInfo} />
+                <EventModal />
+                <AlertDialogSlide />
                 <div className='calendarcontainer'>
                     <div className='calendarnavigation'>
                         <NewEventButton openModal={this.openModal} />
@@ -272,7 +113,7 @@ class Calendar extends Component {
                             </div>
                             <img src={right} onClick={this.nextmounth} />
                         </div>
-                        <ChangeMode activateAdvancedMode={this.activateAdvancedMode} />
+                        <ChangeMode />
                     </div>
                     <div className='calendarbody'>
                         <div className='week'>
@@ -297,14 +138,12 @@ class Calendar extends Component {
 
 export default connect(
     state => ({
-        date: state.date
+        date: state.date,
+        events: state.events
       }),
       dispatch => ({
         onNewMonth: (newDate) => {
           dispatch({ type: 'NEW_MONTH', payload: newDate })
-        },
-        // onDataInfo:  (dateInfo) => {
-        //     dispatch({ type: 'DATE_INFO', payload: dateInfo })
-        // }       
+        }      
       })
 )(Calendar);

@@ -1,13 +1,14 @@
 import React from 'react';
-import './CalendarDayEvent.sass'
+import { connect } from 'react-redux';
+import './CalendarDayEvent.sass';
 
 
 
 const CalendarDayEvent = (props, contex) => {
 
     let giveInfoEvent = (event) => {
-        event.stopPropagation()
-        props.openEventModal(props.event);
+        event.stopPropagation();
+        props.onOpenEventModal(props.event);
     }
 
     return (
@@ -15,4 +16,16 @@ const CalendarDayEvent = (props, contex) => {
     )
 }
 
-export default CalendarDayEvent;
+
+export default connect(
+    state => ({
+        advancedMode: state.advancedMode
+      }),
+      dispatch => ({
+        onOpenEventModal: (event) => {
+          dispatch({ type: 'OPEN_EVENT_MODAL', payload: true });
+          dispatch({ type: 'EVENT_MODAL_INFO', payload: event });
+        },
+              
+      })
+)(CalendarDayEvent);

@@ -20,17 +20,16 @@ class CalendarDay extends Component{
     }
 
     render(){
-        console.log(this.props)
         let eventsDay;
         if(this.props.eventsDay !== undefined){
-            eventsDay = this.props.eventsDay.map(event => {
-                return <CalendarDayEvent event = {event} advancedMode = {this.props.advancedMode} openEventModal = {this.props.openEventModal}/>  
+            eventsDay = this.props.eventsDay.map((event, index) => {
+                return <CalendarDayEvent event = {event} key = {index}/>  
             })
         }
         return(
                 <div className = 'calendarday' onClick = {this.openModalInfo}>
                     {this.props.day !== undefined && <div className = {this.props.advancedMode ?  'numbersadvancedMode' : this.props.eventsDay !== undefined ?  'numbers red' :  'numbers' }>{this.props.day}</div>} 
-                    <div className = {this.props.advancedMode ? ' eventsday eventsdayadvancedMode'  : 'eventsday' }>{eventsDay}</div>            
+                    <div className = {this.props.advancedMode ? ' eventsday eventsdayadvancedMode'  : 'eventsday' }>{eventsDay}</div>
                 </div>
         )
     }
@@ -38,7 +37,8 @@ class CalendarDay extends Component{
 
 export default connect(
     state => ({
-        modal: state.modal.modal
+        modal: state.modal.modal,
+        advancedMode: state.advancedMode
       }),
       dispatch => ({
         onOpenModal: (arrDayInfo) => {

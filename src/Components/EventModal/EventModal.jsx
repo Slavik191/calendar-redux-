@@ -5,6 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
+import { connect } from 'react-redux';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -15,7 +16,7 @@ class EventModal extends Component {
         return (
             <div>
                 <Dialog
-                    open={this.props.open}
+                    open={this.props.openEventModal}
                     TransitionComponent={Transition}
                     keepMounted
                     onClose={this.handleClose}
@@ -23,15 +24,15 @@ class EventModal extends Component {
                     aria-describedby="alert-dialog-slide-description"
                 >
                     <DialogTitle id="alert-dialog-slide-title">
-                        {this.props.EventModalInfo !== null ? `Событие ${this.props.EventModalInfo.day}.${this.props.EventModalInfo.month}.${this.props.EventModalInfo.year} (${this.props.EventModalInfo.startHours}:${this.props.EventModalInfo.startMinutes}-${this.props.EventModalInfo.endHours}:${this.props.EventModalInfo.endMinutes})` : ''}
+                        {this.props.eventModalInfo !== null ? `Событие ${this.props.eventModalInfo.day}.${this.props.eventModalInfo.month}.${this.props.eventModalInfo.year} (${this.props.eventModalInfo.startHours}:${this.props.eventModalInfo.startMinutes}-${this.props.eventModalInfo.endHours}:${this.props.eventModalInfo.endMinutes})` : ''}
                     </DialogTitle>
                     <DialogContent>  
-                        {this.props.EventModalInfo !== null ? this.props.EventModalInfo.description : ''}
+                        {this.props.eventModalInfo !== null ? this.props.eventModalInfo.description : ''}
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.props.exitEventModal} color="primary">
+                        <Button onClick={this.props.onCloseEventModal} color="primary">
                             Закрыть
-            </Button>
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </div>
@@ -39,4 +40,14 @@ class EventModal extends Component {
     }
 }
 
-export default EventModal;
+export default connect(
+    state => ({
+        openEventModal: state.modal.openEventModal,
+        eventModalInfo: state.events.eventModalInfo
+      }),
+      dispatch => ({
+        onCloseEventModal: () => {
+          dispatch({ type: 'OPEN_EVENT_MODAL', payload: false })
+        }            
+      })
+)(EventModal);

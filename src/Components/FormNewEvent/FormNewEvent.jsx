@@ -4,37 +4,8 @@ import { connect } from 'react-redux';
 import './FormNewEvent.sass';
 
 class FormNewEvent extends Component{
-    state = {
-        day: '',
-        month: '',
-        year: '',
-        startHours: '',
-        startMinutes: '',
-        endHours: '',
-        endMinutes: '',
-        description: ''
-    };
-
-    componentWillUpdate(nextProps){
-        if(nextProps !== this.props){
-            this.setState({
-                day: nextProps.dateInfo !== null ? nextProps.dateInfo[0] : '',
-                month: nextProps.dateInfo !== null ? nextProps.dateInfo[1] : '',
-                year: nextProps.dateInfo !== null ? nextProps.dateInfo[2] : '',
-                startHours: '',
-                startMinutes: '',
-                endHours: '',
-                endMinutes: '',
-                description: ''
-            })
-        }
-    }
-    
-
     handleChange = name => event => {
-        this.setState({
-            [name]: event.target.value,
-        });
+        this.props.onNewValue(name, event.target.value)
     };
 
     handleChangeTime = name => event => {
@@ -48,9 +19,7 @@ class FormNewEvent extends Component{
             change = true;
         }
         if(change){
-            this.setState({
-                [name]: event.target.value,
-            });
+            this.props.onNewValue(name, event.target.value);
         }
     };
 
@@ -70,9 +39,7 @@ class FormNewEvent extends Component{
             change = true;
         }
         if(change){
-            this.setState({
-                [name]: event.target.value,
-            });
+            this.props.onNewValue(name, event.target.value)
         }
     };
 
@@ -84,7 +51,7 @@ class FormNewEvent extends Component{
                     <TextField
                         id="outlined-name"
                         label="Число"
-                        value={this.state.day}
+                        value={this.props.formInfo.day}
                         onChange={this.handleChangeDate('day')}
                         margin="normal"
                         variant="outlined"
@@ -92,7 +59,7 @@ class FormNewEvent extends Component{
                     <TextField
                         id="outlined-name"
                         label="месяц"
-                        value={this.state.month}
+                        value={this.props.formInfo.month}
                         onChange={this.handleChangeDate('month')}
                         margin="normal"
                         variant="outlined"
@@ -100,7 +67,7 @@ class FormNewEvent extends Component{
                     <TextField
                         id="outlined-name"
                         label="Год"
-                        value={this.state.year}
+                        value={this.props.formInfo.year}
                         onChange={this.handleChangeDate('year')}
                         margin="normal"
                         variant="outlined"
@@ -113,7 +80,7 @@ class FormNewEvent extends Component{
                         <TextField
                             id="outlined-name"
                             label="Часы"
-                            value={this.state.startHours}
+                            value={this.props.formInfo.startHours}
                             onChange={this.handleChangeTime('startHours')}
                             margin="normal"
                             variant="outlined"
@@ -121,7 +88,7 @@ class FormNewEvent extends Component{
                         <TextField
                             id="outlined-name"
                             label="минуты"
-                            value={this.state.startMinutes}
+                            value={this.props.formInfo.startMinutes}
                             onChange={this.handleChangeTime('startMinutes')}
                             margin="normal"
                             variant="outlined"
@@ -132,7 +99,7 @@ class FormNewEvent extends Component{
                         <TextField
                             id="outlined-name"
                             label="Часы"
-                            value={this.state.endHours}
+                            value={this.props.formInfo.endHours}
                             onChange={this.handleChangeTime('endHours')}
                             margin="normal"
                             variant="outlined"
@@ -140,7 +107,7 @@ class FormNewEvent extends Component{
                         <TextField
                             id="outlined-name"
                             label="минуты"
-                            value={this.state.endMinutes}
+                            value={this.props.formInfo.endMinutes}
                             onChange={this.handleChangeTime('endMinutes')}
                             margin="normal"
                             variant="outlined"
@@ -153,7 +120,7 @@ class FormNewEvent extends Component{
                     multiline
                     rows = '4'
                     rowsMax="4"
-                    value={this.state.description}
+                    value={this.props.formInfo.description}
                     onChange={this.handleChange('description')}
                     margin="normal"
                     variant="outlined"
@@ -167,14 +134,11 @@ class FormNewEvent extends Component{
 
 export default connect(
     state => ({
-        dateInfo: state.date.dateInfo
+        formInfo: state.formNewEvent
       }),
-    //   dispatch => ({
-    //     onNewMonth: (newDate) => {
-    //       dispatch({ type: 'NEW_MONTH', payload: newDate })
-    //     },
-    //     onDataInfo:  (dateInfo) => {
-    //         dispatch({ type: 'DATE_INFO', payload: dateInfo })
-    //     }       
-    //   })
+      dispatch => ({
+          onNewValue: (name, newValue) => {
+              dispatch({type: 'NEW_VALUE', payload: {name: name, newValue: newValue}})
+          }
+      })
 )(FormNewEvent);
